@@ -1,15 +1,15 @@
 # vue 
 # 가져올 이미지를 정의
-FROM node:latest
+# FROM node:latest
 
 # 경로 설정하기
-WORKDIR /encore-vue-pjt
+# WORKDIR /encore-vue-pjt
 
 # package.json 워킹 디렉토리에 복사 (.은 설정한 워킹 디렉토리를 뜻함)
-COPY package.json .
+# COPY package.json .
 
 # 현재 디렉토리의 모든 파일을 도커 컨테이너의 워킹 디렉토리에 복사한다.
-COPY . .
+# COPY . .
 
 # 각각의 명령어들은 한줄 한줄씩 캐싱되어 실행된다.
 # package.json의 내용은 자주 바뀌진 않을 거지만
@@ -18,16 +18,30 @@ COPY . .
 # 소스 코드가 조금 달라질때도 항상 npm install을 수행해서 리소스가 낭비된다.
 
 # 명령어 실행 (의존성 설치)
-RUN npm install
-RUN npm i axios
-RUN npm install -g json-server@0.17.0
-RUN npm install vuex@next --save
+# RUN npm install
+# RUN npm i axios
+# RUN npm install -g json-server@0.17.0
+# RUN npm install vuex@next --save
 
 # 3000번 포트 노출
-EXPOSE 8080
+# EXPOSE 8080
 
 # npm start 스크립트 실행
 # CMD ["json-server", "--watch", "db.json"]
+# CMD ["npm", "run", "serve"]
+
+# git action version
+# build
+FROM node:latest AS build
+WORKDIR /frontapp
+COPY . .
+RUN npm install
+RUN npm run build
+
+# production
+FROM node:latest-alpine AS production
+WORKDIR /frontapp
+COPY --from=build /frontapp
 CMD ["npm", "run", "serve"]
 
 
